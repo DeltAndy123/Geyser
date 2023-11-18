@@ -75,21 +75,29 @@ public class AnvilContainer extends Container {
 
         String originalName = ItemUtils.getCustomName(getInput().getNbt());
 
-        String plainOriginalName = MessageTranslator.convertToPlainTextLenient(originalName, session.locale());
-        String plainNewName = MessageTranslator.convertToPlainText(rename);
-        if (!plainOriginalName.equals(plainNewName)) {
-            // Strip out formatting since Java Edition does not allow it
-            correctRename = plainNewName;
-            // Java Edition sends a packet every time an item is renamed even slightly in GUI. Fortunately, this works out for us now
-            ServerboundRenameItemPacket renameItemPacket = new ServerboundRenameItemPacket(plainNewName);
+        if (session.getGeyser().getConfig().isAllowSectionSymbol()) {
+            // If the "allow-section-symbol" config option is enabled,
+            // we can just send the rename packet
+            correctRename = rename;
+            ServerboundRenameItemPacket renameItemPacket = new ServerboundRenameItemPacket(rename);
             session.sendDownstreamGamePacket(renameItemPacket);
         } else {
-            // Restore formatting for item since we're not renaming
-            correctRename = MessageTranslator.convertMessageLenient(originalName);
-            // Java Edition sends the original custom name when not renaming,
-            // if there isn't a custom name an empty string is sent
-            ServerboundRenameItemPacket renameItemPacket = new ServerboundRenameItemPacket(plainOriginalName);
-            session.sendDownstreamGamePacket(renameItemPacket);
+            String plainOriginalName = MessageTranslator.convertToPlainTextLenient(originalName, session.locale());
+            String plainNewName = MessageTranslator.convertToPlainText(rename);
+            if (!plainOriginalName.equals(plainNewName)) {
+                // Strip out formatting since Java Edition does not allow it
+                correctRename = plainNewName;
+                // Java Edition sends a packet every time an item is renamed even slightly in GUI. Fortunately, this works out for us now
+                ServerboundRenameItemPacket renameItemPacket = new ServerboundRenameItemPacket(plainNewName);
+                session.sendDownstreamGamePacket(renameItemPacket);
+            } else {
+                // Restore formatting for item since we're not renaming
+                correctRename = MessageTranslator.convertMessageLenient(originalName);
+                // Java Edition sends the original custom name when not renaming,
+                // if there isn't a custom name an empty string is sent
+                ServerboundRenameItemPacket renameItemPacket = new ServerboundRenameItemPacket(plainOriginalName);
+                session.sendDownstreamGamePacket(renameItemPacket);
+            }
         }
 
         useJavaLevelCost = false;

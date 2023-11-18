@@ -65,25 +65,26 @@ public class BedrockBookEditTranslator extends PacketTranslator<BookEditPacket> 
                 session.getGeyser().getLogger().warning("Edited page is out of acceptable bounds!");
                 return;
             }
+            boolean allowSectionSign = session.getGeyser().getConfig().isAllowSectionSymbol();
             switch (packet.getAction()) {
                 case ADD_PAGE: {
                     // Add empty pages in between
                     for (int i = pages.size(); i < page; i++) {
                         pages.add(i, new StringTag("", ""));
                     }
-                    pages.add(page, new StringTag("", MessageTranslator.convertToPlainText(packet.getText())));
+                    pages.add(page, new StringTag("", allowSectionSign ? packet.getText() : MessageTranslator.convertToPlainText(packet.getText())));
                     break;
                 }
                 // Called whenever a page is modified
                 case REPLACE_PAGE: {
                     if (page < pages.size()) {
-                        pages.set(page, new StringTag("", MessageTranslator.convertToPlainText(packet.getText())));
+                        pages.set(page, new StringTag("", allowSectionSign ? packet.getText() : MessageTranslator.convertToPlainText(packet.getText())));
                     } else {
                         // Add empty pages in between
                         for (int i = pages.size(); i < page; i++) {
                             pages.add(i, new StringTag("", ""));
                         }
-                        pages.add(page, new StringTag("", MessageTranslator.convertToPlainText(packet.getText())));
+                        pages.add(page, new StringTag("", allowSectionSign ? packet.getText() : MessageTranslator.convertToPlainText(packet.getText())));
                     }
                     break;
                 }
@@ -101,8 +102,8 @@ public class BedrockBookEditTranslator extends PacketTranslator<BookEditPacket> 
                     break;
                 }
                 case SIGN_BOOK: {
-                    tag.put(new StringTag("author", MessageTranslator.convertToPlainText(packet.getAuthor())));
-                    tag.put(new StringTag("title", MessageTranslator.convertToPlainText(packet.getTitle())));
+                    tag.put(new StringTag("author", allowSectionSign ? packet.getAuthor() : MessageTranslator.convertToPlainText(packet.getAuthor())));
+                    tag.put(new StringTag("title", allowSectionSign ? packet.getTitle() : MessageTranslator.convertToPlainText(packet.getTitle())));
                     break;
                 }
                 default:
@@ -130,7 +131,7 @@ public class BedrockBookEditTranslator extends PacketTranslator<BookEditPacket> 
             String title;
             if (packet.getAction() == BookEditPacket.Action.SIGN_BOOK) {
                 // Add title to packet so the server knows we're signing
-                title = MessageTranslator.convertToPlainText(packet.getTitle());
+                title = allowSectionSign ? packet.getTitle() : MessageTranslator.convertToPlainText(packet.getTitle());
                 if (title.length() > WrittenBookItem.MAXIMUM_TITLE_LENGTH) {
                     session.getGeyser().getLogger().warning("Book title larger than server allows!");
                     return;

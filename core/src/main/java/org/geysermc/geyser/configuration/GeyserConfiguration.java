@@ -81,6 +81,8 @@ public interface GeyserConfiguration {
 
     boolean isDisableBedrockScaffolding();
 
+    boolean isAllowSectionSymbol();
+
     EmoteOffhandWorkaroundOption getEmoteOffhandWorkaround();
 
     String getDefaultLocale();

@@ -36,7 +36,7 @@ public class BedrockTextTranslator extends PacketTranslator<TextPacket> {
 
     @Override
     public void translate(GeyserSession session, TextPacket packet) {
-        String message = MessageTranslator.convertToPlainText(packet.getMessage());
+        String message = session.getGeyser().getConfig().isAllowSectionSymbol() ? packet.getMessage() : MessageTranslator.convertToPlainText(packet.getMessage());
 
         if (message.isBlank()) {
             // Java Edition (as of 1.17.1) just doesn't pass on these messages, so... we won't either!

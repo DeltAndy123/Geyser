@@ -38,7 +38,7 @@ public class BedrockCommandRequestTranslator extends PacketTranslator<CommandReq
 
     @Override
     public void translate(GeyserSession session, CommandRequestPacket packet) {
-        String command = MessageTranslator.convertToPlainText(packet.getCommand());
+        String command = session.getGeyser().getConfig().isAllowSectionSymbol() ? packet.getCommand() : MessageTranslator.convertToPlainText(packet.getCommand());
         if (!(session.getGeyser().getPlatformType() == PlatformType.STANDALONE
                 && GeyserImpl.getInstance().commandManager().runCommand(session, command.substring(1)))) {
             if (MessageTranslator.isTooLong(command, session)) {
