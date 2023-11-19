@@ -131,7 +131,7 @@ show-coordinates: true
 # Whether Bedrock players are blocked from performing their scaffolding-style bridging.
 disable-bedrock-scaffolding: false
 
-# Whether to allow Bedrock players to use the section symbol (§) for color codes.
+# Whether to allow Bedrock players to use the section symbol for color codes.
 # Note: Some Bedrock color/formatting codes are different from those in Java.
 allow-section-symbol: false
 
